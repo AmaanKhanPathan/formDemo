@@ -1,0 +1,196 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()">
+        <!-- username -->
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" class="form-control" id="username" formControlName="username">
+
+          <!-- Mandatory val -->
+          <p class="alert alert-danger"
+            *ngIf="getUsernameControl.invalid && getUsernameControl.touched && getUsernameControl.hasError('required')">
+            Username is Mandatory</p>
+
+          <!-- Maxlength val-->
+          <p class="alert alert-danger"
+            *ngIf="getUsernameControl.invalid && getUsernameControl.dirty && getUsernameControl.hasError('maxlength')">
+            Username maxlength should be {{getUsernameControl.errors?.['maxlength'].requiredLength}} and the actual
+            length is {{getUsernameControl.errors?.['maxlength'].actualLength}}
+          </p>
+
+          <!-- Minlength val-->
+          <p class="alert alert-danger"
+            *ngIf="getUsernameControl.invalid && getUsernameControl.touched && getUsernameControl.hasError('minlength')">
+            Username minlength should be {{getUsernameControl.errors?.['minlength'].requiredLength}} and the actual
+            length is {{getUsernameControl.errors?.['minlength'].actualLength}}</p>
+        </div>
+
+        <p class="alert alert-danger" *ngIf="f['username'].invalid && f['username'].dirty && f['username'].hasError('noSpaceError')">
+          {{f['username'].errors?.['noSpaceError']}}
+        </p>
+
+
+
+        <!----------------------------------- empId  ----------------------------------------------------------->
+        <div class="form-group">
+          <label for="empId">EmpId</label>
+          <input type="text" id="empId" class="form-control" formControlName="empId" placeholder="E123">
+          <ng-container *ngIf="f['empId'].invalid && f['empId'].touched">
+          <p class="alert alert-danger" *ngIf="f['empId'].hasError('required')">
+            EmpId is Mandatory
+          </p>
+          <p class="alert alert-danger" *ngIf="f['empId'].dirty && f['empId'].hasError('invalidEmpId')">
+          {{f['empId'].errors?.['invalidEmpId']}}
+        </p>
+        </ng-container>                
+        </div>
+
+        <!------------------------------------------ Skills  ----------------------------------------------------->
+
+        <div formArrayName="skills">
+          <h5>skills</h5>
+          <div class="row" *ngFor="let skill of skillsFormArray.controls; let i = index">
+            <div class="col-sm-10">
+              <input type="text" [formControlName]="i" class="form-control mb-2">
+            </div>           
+            <div class="col-sm-2" *ngIf="i>0">
+              <button class="btn btn-danger">Delete</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="text-right">
+                <button class="btn btn-info" type="button"
+              *ngIf="skillsFormArray.length < 5 ; else hideSkillBtn"               
+              (click)="addMoreSkills()">Add More Skills</button>
+              </div>
+              <ng-template #hideSkillBtn>
+                <p class="alert alert-danger">
+                  You can add only 5 skills
+                </p>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+
+
+        <!-------------------------------------------------- email --------------------------------------------------------->
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="text" class="form-control" id="email" formControlName="email">
+          <ng-container *ngIf="f['email'].dirty && f['email'].pending">
+            <div class="spinner-border text-danger mt-2" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="f['email'].touched && f['email'].invalid">
+            <p class="alert alert-danger" *ngIf="f['email'].hasError('required')">
+              This field is required
+            </p>
+          </ng-container>
+          <ng-container *ngIf="f['email'].invalid && f['email'].dirty">
+            <p class="alert alert-danger" *ngIf="f['email'].hasError('pattern')">
+              Please enter valid email ID
+            </p>
+            <p class="alert alert-danger" *ngIf="f['email'].hasError('emailExistError')">
+              This email is already exist
+            </p>
+          </ng-container>
+          <p class="alert alert-danger" *ngIf="f['email'].invalid && f['email'].dirty && f['email'].hasError('forbiddenError')">
+            {{f['email'].errors?.['forbiddenError']}}
+          </p>
+        </div>
+
+
+        <!-------------------------------------------------- gender ------------------------------------------------------->
+        <div class="form-group mt-4 mb-4">
+          <label for="gender"><b>Gender : </b></label>
+          <ng-container *ngFor="let gender of gendersArray">
+            <label [for]="gender">
+              <input type="radio" formControlName="gender" [id]="gender" [value]="gender"
+                class="ml-2">{{gender}}</label>
+          </ng-container>
+        </div>
+
+        <!------------------------------------ permanentAddress --------------------------------------->
+
+        <div class="row">
+          <div class="col-sm-6" formGroupName="currentAddress">
+            <h5>Current Address</h5>
+
+
+
+            <!-- Country -->
+            <div class="form-group">
+              <label for="">Country:</label>
+              <select class="form-control" formControlName="country">
+                <option value="">Select Country:</option>
+                <option [value]="country.country" *ngFor="let country of countriesArray">
+                  {{country.country}}
+                </option>
+              </select>
+            </div>
+
+
+            <!-- State -->
+            <div class="form-group mb-2">
+              <label for="state">State</label>
+              <input type="text" class="form-control" formControlName="state">
+            </div>
+
+            <!-- city -->
+            <div class="form-group mb-2">
+              <label for="city">City</label>
+              <input type="text" class="form-control" formControlName="city">
+            </div>
+
+            <!-- city -->
+            <div class="form-group mb-2">
+              <label for="city">Zip Code</label>
+              <input type="text" class="form-control" formControlName="zipCode">
+            </div>
+
+          </div>
+          <div class="col-sm-6 ">
+            <h5>Permanent Address</h5>
+          </div>
+        </div>
+
+
+        <!-------------------------------------- password ------------------------------------------->
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="text" class="form-control" id="password" formControlName="password">
+          <ng-container *ngIf="f['password'].invalid && f['password'].touched">
+            <p class="alert alert-danger" *ngIf="f['password'].hasError('required')">
+              Password is Mandatory
+            </p>
+            <p class="alert alert-danger" *ngIf="f['password'].hasError('pattern')">
+              Password should contain at least one capital letter, one lowercase letter, one special character and one number
+            </p>
+          </ng-container>
+        </div>
+
+
+
+        <!-- confirm password -->
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="text" class="form-control" id="confirmPassword" formControlName="confirmPassword">
+          <ng-container *ngIf="f['confirmPassword'].dirty">
+            <p class="alert alert-danger" *ngIf="f['confirmPassword'].value != f['password'].value">
+              Password and Confirm Password should be same
+            </p>
+          </ng-container>
+        </div>
+
+
+        <!-- Button -->
+        <div class="text-right mb-4">
+          <button class="btn btn-primary" type="submit" [disabled]="signUpForm.invalid || f['confirmPassword'].value != f['password'].value">Join Us</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
